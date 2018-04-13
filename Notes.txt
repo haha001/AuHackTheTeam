@@ -1,0 +1,12 @@
+Notes:
+
+Goal: To create a IoT sensor network around the world, capturing and visualizing water quality levels.
+
+Target: Public utility companies
+Sensor: Arduino with Water quality sensor and GPS module
+REST API for data transactions
+Firebase for persistence
+Frontend: Some web application with Google Maps with points to sensor stations
+Analysis: See Grundfos data, maybe mock it
+
+Use cases: Find the water quality around the world, capture data - for prediction, forecasting, modelling
