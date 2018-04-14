@@ -1,6 +1,7 @@
 
 var map;
 var markers = [];
+var infoWindow; 
 
 
 firebase.initializeApp({
@@ -24,11 +25,11 @@ function initMap()
 		zoom: 4,
 		center: aarhus
 	});
-	markers.push(new google.maps.Marker(
+	infoWindow = new google.maps.InfoWindow(
 	{
-		position: aarhus,
-		map: map
-	}));
+		content: 'Hello World'
+	});
+
 }
 	
 function loadDb(key)
@@ -85,17 +86,10 @@ function createQuery(searchKey, distance)
 			
 			geoQuery.on("key_entered", function(key, location, distance)
 			{
-				if (key != searchKey)
+				dataRef.child(key).once('value').then(function (snapshot)
 				{
-
-					
-					
-					dataRef.child(key).once('value').then(function (snapshot)
-					{
-						printWater(snapshot, location);
-					});
-				}
-				
+					printWater(snapshot, location);
+				});				
 			});
 		}
 		}, function(error) {
@@ -141,13 +135,32 @@ function getContentString(snapshot)
 	var leadLevel = snapshot.child('leadLevel').val();
 	var bacteria = snapshot.child('bacteria').val();
 	var dirtLevel = snapshot.child('dirtLevel').val();
-	
+	var waterIndex = snapshot.child('waterIndex').val();
+	//<div id="waterIndexOutside"><div id="waterIndexInside"></div></div>
 	
 	
 	return '<div id="content">'+
 		'<div id="siteNotice">'+
 		'</div>'+
-		'<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+		'<h1 id="firstHeading" class="firstHeading"> <progress id="waterIndexSlider" value="' + waterIndex + '" max="100"></progress> Water index: '+ waterIndex + '</h1>' +
+		'<div id="bodyContent">'+
+		'<table width=100%>' +
+		'<tr>' +
+		'<td><strong>pH: </strong> ' + ph + '</td>' +
+		'<td><strong>lead: </strong> ' + leadLevel + 'ppm</td>' +
+		'</tr>' +
+		'<tr>' +
+		'<td><strong>bacteria: </strong>' + bacteria + '</td>' +
+		'<td><strong>dirt: </strong>' + dirtLevel + 'ppm</td>' +
+		'</tr>' +
+		'</table>'+
+		'</div>'+
+		'</div>';
+	
+	return '<div id="content">'+
+		'<div id="siteNotice">'+
+		'</div>'+
+		'<h1 id="firstHeading" class="firstHeading"> <progress id="waterIndexSlider" value="' + waterIndex + '" max="100"></progress> Water index: '+ waterIndex + '</h1>' +
 		'<div id="bodyContent">'+
 		'<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
 		'sandstone rock formation in the southern part of the '+
@@ -194,14 +207,12 @@ function addMarker(location, color, content)
 		);
 	}
 
-	var infoWindow = new google.maps.InfoWindow(
-	{
-		content: content
-	});
 	
-	marker.addListener('click', function()
+	
+	google.maps.event.addListener(marker,'click', function(e)
 	{
-		infoWindow.open(map, marker);
+		infoWindow.setContent(content);
+		infoWindow.open(map, this);
 	});
 	markers.push(marker);
 	//showMarkers();
@@ -223,5 +234,3 @@ function showMarkers()
 		markers[i].setMap(map);
 	}
 }
-
-

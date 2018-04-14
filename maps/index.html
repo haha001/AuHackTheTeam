@@ -15,9 +15,34 @@
 	<script src="map.js"></script>
     <style>
        #map {
-        height: 720px;
+        height: 100%;
         width: 100%;
        }
+	   html, body
+	   {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	   }
+	   progress[value]
+	   {
+		-moz-appearance: none;
+		appearance: none;
+		
+		background-size: 35px, 20px, 100%, 100%, 100%, 100%;
+		color: red;
+	   }
+	   progress[value]::-webkit-progress-bar
+	   {
+		background-size: 35px 20px, 100% 100%, 100% 100%;
+		color: red;
+	   }
+	   th,td
+	   {
+		padding: 5px;
+		text-align: left;
+		font-size: 14px;
+	   }
     </style>
   </head>
   <body>
@@ -32,6 +57,7 @@
 		var val3 = [10.223921, 56.222939];
 		var val4 = [10.103921, 56.329390];
 		var val5 = [10.303921, 56.692939];
+		var val6 = [10.189897, 56.172282];
 		//saveSomething('2', val2);
 		/*
 		saveLocation('1', val);
@@ -39,14 +65,14 @@
 		saveLocation('3', val3);
 		saveLocation('4', val4);
 		saveLocation('5', val5);
+		
 		saveWater('1', 7.25, 2018, 2);
 		saveWater('2', 8.2, 1012, 102);
 		saveWater('3', 7.0, 28, 234);
 		saveWater('4', 7.5, 7018, 0);
 		saveWater('5', 7.76, 9018, 1);
 		*/
-		
-		createQuery('1', 10);
+		createQuery('1', 50);
 		console.log('Done creating');
     </script>
 
