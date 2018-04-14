@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+
+    <!-- RSVP -->
+    <script src="https://unpkg.com/rsvp@3.1.0/dist/rsvp.min.js"></script>
+
+    <!-- GeoFire -->
+    <script src="https://cdn.firebase.com/libs/geofire/4.1.0/geofire.min.js"></script>
+	
+	<!-- Map -->
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTHOyHANqPWZTEw6nxOZoC2X-U_ebvmi4"></script>
+	<script src="map.js"></script>
+    <style>
+       #map {
+        height: 720px;
+        width: 100%;
+       }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+		console.log('Creating Watermap');
+		initMap();
+		//loadDb('1');
+		var val = [38.89, -122.41];
+		var val2 = [38.92, -122.41];
+		//saveSomething('2', val2);
+		//saveLocation('1', val);
+		//saveWater('1',val, 7.25, 2018);
+		
+		createQuery(val, 1000);
+		console.log('Done creating');
+    </script>
+
+  </body>
+</html>
