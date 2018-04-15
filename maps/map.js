@@ -22,7 +22,7 @@ function initMap()
 	var aarhus = {lat: 56.162939, lng: 10.203921};
 	map = new google.maps.Map(document.getElementById('map'),
 	{
-		zoom: 4,
+		zoom: 12,
 		center: aarhus
 	});
 	infoWindow = new google.maps.InfoWindow(
@@ -32,29 +32,16 @@ function initMap()
 
 }
 	
-function loadDb(key)
-{
-	// Create a GeoQuery centered at fish2 u1zr80nk8
-	geoFire.get(key).then(function(location) {
-		alert(location)
-		if (location === null) {
-			console.log("Provided key is not in GeoFire");
-		}
-		else {
-			console.log("Provided key has a location of " + location + " with pH: " + ph);
-		}
-		}, function(error) {
-			console.log("Error: " + error);
-	});
-}
 
-function saveWater(key, ph, bacteria, leadLevel)
+function saveWater(key, ph, bacteria, leadLevel, dirt, waterIndex)
 {
 	firebase.database().ref('data/' + key).set(
 	{
 		leadLevel: leadLevel,
 		ph: ph,
-		bacteria: bacteria
+		bacteria: bacteria,
+		waterIndex: waterIndex,
+		dirtLevel: dirt
 	});
 }
 
@@ -106,7 +93,7 @@ function printWater(snapshot, location)
 		var leadLevel = snapshot.child('leadLevel').val();
 		var bacteria = snapshot.child('bacteria').val();
 		var dirtLevel = snapshot.child('dirtLevel').val();
-		//var location = snapshot.child('location').val();
+		var waterIndex = snapshot.child('waterIndex').val();
 		
 		var contentString = getContentString(snapshot);
 		
@@ -114,7 +101,7 @@ function printWater(snapshot, location)
 		var lat = Number(location[1]);
 		var loc = {lat: lat, lng: lng};
 		
-		if (ph > 6.5 && ph < 8)
+		if (waterIndex == 100)
 		{
 			
 			addMarker(loc,'green', contentString);
@@ -144,6 +131,7 @@ function getContentString(snapshot)
 		'</div>'+
 		'<h1 id="firstHeading" class="firstHeading"> <progress id="waterIndexSlider" value="' + waterIndex + '" max="100"></progress> Water index: '+ waterIndex + '</h1>' +
 		'<div id="bodyContent">'+
+		'<div id="waterContent">'+
 		'<table width=100%>' +
 		'<tr>' +
 		'<td><strong>pH: </strong> ' + ph + '</td>' +
@@ -155,28 +143,9 @@ function getContentString(snapshot)
 		'</tr>' +
 		'</table>'+
 		'</div>'+
+		'</div>'+
 		'</div>';
 	
-	return '<div id="content">'+
-		'<div id="siteNotice">'+
-		'</div>'+
-		'<h1 id="firstHeading" class="firstHeading"> <progress id="waterIndexSlider" value="' + waterIndex + '" max="100"></progress> Water index: '+ waterIndex + '</h1>' +
-		'<div id="bodyContent">'+
-		'<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-		'sandstone rock formation in the southern part of the '+
-		'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-		'south west of the nearest large town, Alice Springs; 450&#160;km '+
-		'(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-		'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-		'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-		'Aboriginal people of the area. It has many springs, waterholes, '+
-		'rock caves and ancient paintings. Uluru is listed as a World '+
-		'Heritage Site.</p>'+
-		'<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-		'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-		'(last visited June 22, 2009).</p>'+
-		'</div>'+
-		'</div>';
 }
 
 function getAllDataPoints()
@@ -189,20 +158,36 @@ function addMarker(location, color, content)
 	
 	if (color == 'green')
 	{
+		var pinIcon = new google.maps.MarkerImage(
+			"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|00FF00",
+			null, /* size is determined at runtime */
+			null, /* origin is 0,0 */
+			null, /* anchor is bottom center of the scaled image */
+			new google.maps.Size(32, 50)
+		);  
 		var marker = new google.maps.Marker(
 		{
 			position: location,
 			map: map,
-			icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+			//icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+			icon: pinIcon,
 		}
 		);
 	}
 	else
 	{
+		var pinIcon = new google.maps.MarkerImage(
+			"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FF0000",
+			null, /* size is determined at runtime */
+			null, /* origin is 0,0 */
+			null, /* anchor is bottom center of the scaled image */
+			new google.maps.Size(32, 50)
+		);  
 		var marker = new google.maps.Marker(
 		{
 			position: location,
-			map: map
+			map: map,
+			icon: pinIcon
 		}
 		);
 	}
